@@ -6,6 +6,9 @@ import Dashboard from "./pages/dashboard"
 import Opportunities from "./pages/opportunities"
 import OpportunityDetail from "./pages/opportunityDetail"
 import PostOpportunity from "./pages/postOpportunity"
+import Profile from "./pages/profile"
+import MyApplications from "./pages/myApplications"
+import OrgDashboard from "./pages/orgDashboard"
 
 export default function App() {
   return (
@@ -18,6 +21,9 @@ export default function App() {
         <Route path="/opportunities" element={<Opportunities />} />
         <Route path="/opportunities/:id" element={<OpportunityDetail />} />
         <Route path="/post-opportunity" element={<PostOpportunity />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/my-applications" element={<MyApplications />} />
+        <Route path="/org-dashboard" element={<OrgDashboard />} />
       </Routes>
     </BrowserRouter>
   )

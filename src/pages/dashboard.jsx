@@ -132,82 +132,167 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Opportunities section */}
-        <div
-          role="button"
-          tabIndex={0}
-          onClick={() => navigate("/opportunities")}
-          onKeyDown={(e) => e.key === "Enter" && navigate("/opportunities")}
-          style={{
-            background: "#fff",
-            borderRadius: "12px",
-            padding: "20px",
-            border: "0.5px solid #F3F4F6",
-            boxShadow: "0 2px 12px rgba(26, 60, 110, 0.06)",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <div>
-            <h3 style={{
-              fontSize: "15px",
-              fontWeight: "600",
-              color: "#1A3C6E",
-              margin: "0 0 4px",
-            }}>
-              Browse opportunities
-            </h3>
-            <p style={{
-              fontSize: "12px",
-              color: "#6B7280",
-              margin: 0,
-            }}>
-              Internships, attachments, NS placements and more
-            </p>
-          </div>
-          <div style={{ fontSize: "20px" }}>→</div>
-        </div>
+        {/* Student and Talent navigation */}
+        {(profile?.user_type === "student" || profile?.user_type === "talent") && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
 
-        {/* Post opportunity - show for organisations */}
-        {profile?.user_type === "organisation" && (
-          <div
-            role="button"
-            tabIndex={0}
-            onClick={() => navigate("/post-opportunity")}
-            onKeyDown={(e) => e.key === "Enter" && navigate("/post-opportunity")}
-            style={{
-              background: "#fff",
-              borderRadius: "12px",
-              padding: "20px",
-              border: "0.5px solid #F3F4F6",
-              boxShadow: "0 2px 12px rgba(26, 60, 110, 0.06)",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              marginTop: "12px",
-            }}
-          >
-            <div>
-              <h3 style={{
-                fontSize: "15px",
-                fontWeight: "600",
-                color: "#0F9E7B",
-                margin: "0 0 4px",
-              }}>
-                Post an opportunity
-              </h3>
-              <p style={{
-                fontSize: "12px",
-                color: "#6B7280",
-                margin: 0,
-              }}>
-                Reach verified Ghanaian talent today
-              </p>
+            <div
+              onClick={() => navigate("/opportunities")}
+              style={{
+                background: "#fff",
+                borderRadius: "12px",
+                padding: "18px 20px",
+                border: "0.5px solid #F3F4F6",
+                boxShadow: "0 2px 12px rgba(26, 60, 110, 0.06)",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <div>
+                <h3 style={{ fontSize: "15px", fontWeight: "600", color: "#1A3C6E", margin: "0 0 3px" }}>
+                  Browse opportunities
+                </h3>
+                <p style={{ fontSize: "12px", color: "#6B7280", margin: 0 }}>
+                  Internships, attachments, NS placements and more
+                </p>
+              </div>
+              <div style={{ fontSize: "20px", color: "#1A3C6E" }}>→</div>
             </div>
-            <div style={{ fontSize: "20px" }}>→</div>
+
+            <div
+              onClick={() => navigate("/my-applications")}
+              style={{
+                background: "#fff",
+                borderRadius: "12px",
+                padding: "18px 20px",
+                border: "0.5px solid #F3F4F6",
+                boxShadow: "0 2px 12px rgba(26, 60, 110, 0.06)",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <div>
+                <h3 style={{ fontSize: "15px", fontWeight: "600", color: "#1A3C6E", margin: "0 0 3px" }}>
+                  My applications
+                </h3>
+                <p style={{ fontSize: "12px", color: "#6B7280", margin: 0 }}>
+                  Track the status of your applications
+                </p>
+              </div>
+              <div style={{ fontSize: "20px", color: "#1A3C6E" }}>→</div>
+            </div>
+
+            <div
+              onClick={() => navigate("/profile")}
+              style={{
+                background: "#fff",
+                borderRadius: "12px",
+                padding: "18px 20px",
+                border: "0.5px solid #F3F4F6",
+                boxShadow: "0 2px 12px rgba(26, 60, 110, 0.06)",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <div>
+                <h3 style={{ fontSize: "15px", fontWeight: "600", color: "#1A3C6E", margin: "0 0 3px" }}>
+                  My profile
+                </h3>
+                <p style={{ fontSize: "12px", color: "#6B7280", margin: 0 }}>
+                  View and edit your skills and information
+                </p>
+              </div>
+              <div style={{ fontSize: "20px", color: "#1A3C6E" }}>→</div>
+            </div>
+
+          </div>
+        )}
+
+        {/* Organisation navigation */}
+        {profile?.user_type === "organisation" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+
+            <div
+              onClick={() => navigate("/post-opportunity")}
+              style={{
+                background: "#fff",
+                borderRadius: "12px",
+                padding: "18px 20px",
+                border: "0.5px solid #F3F4F6",
+                boxShadow: "0 2px 12px rgba(26, 60, 110, 0.06)",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <div>
+                <h3 style={{ fontSize: "15px", fontWeight: "600", color: "#0F9E7B", margin: "0 0 3px" }}>
+                  Post an opportunity
+                </h3>
+                <p style={{ fontSize: "12px", color: "#6B7280", margin: 0 }}>
+                  Reach verified Ghanaian talent today
+                </p>
+              </div>
+              <div style={{ fontSize: "20px", color: "#0F9E7B" }}>→</div>
+            </div>
+
+            <div
+              onClick={() => navigate("/org-dashboard")}
+              style={{
+                background: "#fff",
+                borderRadius: "12px",
+                padding: "18px 20px",
+                border: "0.5px solid #F3F4F6",
+                boxShadow: "0 2px 12px rgba(26, 60, 110, 0.06)",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <div>
+                <h3 style={{ fontSize: "15px", fontWeight: "600", color: "#1A3C6E", margin: "0 0 3px" }}>
+                  View applicants
+                </h3>
+                <p style={{ fontSize: "12px", color: "#6B7280", margin: 0 }}>
+                  Review and manage your applications
+                </p>
+              </div>
+              <div style={{ fontSize: "20px", color: "#1A3C6E" }}>→</div>
+            </div>
+
+            <div
+              onClick={() => navigate("/opportunities")}
+              style={{
+                background: "#fff",
+                borderRadius: "12px",
+                padding: "18px 20px",
+                border: "0.5px solid #F3F4F6",
+                boxShadow: "0 2px 12px rgba(26, 60, 110, 0.06)",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <div>
+                <h3 style={{ fontSize: "15px", fontWeight: "600", color: "#1A3C6E", margin: "0 0 3px" }}>
+                  Browse all opportunities
+                </h3>
+                <p style={{ fontSize: "12px", color: "#6B7280", margin: 0 }}>
+                  See what is currently listed on SwiftHire
+                </p>
+              </div>
+              <div style={{ fontSize: "20px", color: "#1A3C6E" }}>→</div>
+            </div>
+
           </div>
         )}
 
@@ -215,3 +300,5 @@ export default function Dashboard() {
     </div>
   )
 }
+
+      
