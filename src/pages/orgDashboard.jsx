@@ -35,27 +35,41 @@ export default function OrgDashboard() {
     fetchData()
   }, [navigate])
 
+   
   const fetchApplications = async (oppId) => {
-    const { data } = await supabase
+    const { data: apps, error } = await supabase
       .from("applications")
-      .select(`
-        *,
-        profiles (
-          first_name,
-          last_name,
-          user_type,
-          is_verified
-        ),
-        student_profiles (
-          university,
-          programme,
-          skills
-        )
-      `)
+      .select("*")
       .eq("opportunity_id", oppId)
       .order("applied_at", { ascending: false })
-
-    if (data) setApplications(data)
+  
+    console.log("Apps:", apps, "Error:", error)
+  
+    if (!apps || apps.length === 0) {
+      setApplications([])
+      return
+    }
+  
+    const applicantIds = apps.map(a => a.applicant_id)
+  
+    const { data: profilesData } = await supabase
+      .from("profiles")
+      .select("*")
+      .in("id", applicantIds)
+  
+    const { data: studentData } = await supabase
+      .from("student_profiles")
+      .select("*")
+      .in("id", applicantIds)
+  
+    const enriched = apps.map(app => ({
+      ...app,
+      profiles: profilesData?.find(p => p.id === app.applicant_id) || null,
+      student_profiles: studentData?.find(s => s.id === app.applicant_id) || null,
+    }))
+  
+    console.log("Enriched:", enriched)
+    setApplications(enriched)
   }
 
   const handleSelectOpp = (oppId) => {
