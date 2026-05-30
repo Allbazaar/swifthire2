@@ -177,18 +177,34 @@ export default function SignIn() {
             textAlign: "center",
             fontSize: "13px",
             color: "#6B7280",
+            display: "flex",
+            flexDirection: "column",
+            gap: "8px",
           }}>
-            Don't have an account?{" "}
             <span
-              onClick={() => navigate("/signup")}
+              onClick={() => navigate("/forgot-password")}
               style={{
-                color: "#1A3C6E",
-                fontWeight: "500",
+                color: "#6B7280",
                 cursor: "pointer",
                 textDecoration: "underline",
+                fontSize: "12px",
               }}
             >
-              Sign up free
+              Forgot your password?
+            </span>
+            <span>
+              Don't have an account?{" "}
+              <span
+                onClick={() => navigate("/signup")}
+                style={{
+                  color: "#1A3C6E",
+                  fontWeight: "500",
+                  cursor: "pointer",
+                  textDecoration: "underline",
+                }}
+              >
+                Sign up free
+              </span>
             </span>
           </div>
 

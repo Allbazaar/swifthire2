@@ -9,6 +9,8 @@ import PostOpportunity from "./pages/postOpportunity"
 import Profile from "./pages/profile"
 import MyApplications from "./pages/myApplications"
 import OrgDashboard from "./pages/orgDashboard"
+import ForgotPassword from "./pages/forgotPassword"
+import ResetPassword from "./pages/resetPassword"
 
 export default function App() {
   return (
@@ -24,6 +26,8 @@ export default function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/my-applications" element={<MyApplications />} />
         <Route path="/org-dashboard" element={<OrgDashboard />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
     </BrowserRouter>
   )

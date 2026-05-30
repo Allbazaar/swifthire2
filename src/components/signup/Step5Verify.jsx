@@ -13,66 +13,80 @@ export default function Step5Verify({ formData, onBack }) {
   const handleCreateAccount = async () => {
     setLoading(true)
     setError("")
-
+  
     try {
       const { data, error: signUpError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
       })
-
+  
       if (signUpError) throw signUpError
-
-      const userId = data.user?.id
-
-      if (!userId) {
-        setNeedsEmailConfirmation(true)
-        setSuccess(true)
-        return
+  
+      const user = data?.user
+      if (!user) throw new Error("Account created. Please check your email to verify.")
+  
+      const userId = user.id
+  
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .insert({
+          id: userId,
+          user_type: formData.userType,
+          first_name: formData.firstName,
+          last_name: formData.lastName,
+          middle_name: formData.middleName || null,
+          is_verified: formData.email.endsWith(".edu.gh"),
+        })
+  
+      if (profileError) {
+        console.error("Profile insert error:", profileError)
       }
-
-      const { error: profileError } = await supabase.from("profiles").insert({
-        id: userId,
-        user_type: formData.userType,
-        first_name: formData.firstName,
-        last_name: formData.lastName,
-        middle_name: formData.middleName || null,
-        is_verified: formData.email.endsWith(".edu.gh"),
-      })
-
-      if (profileError) throw profileError
-
+  
       if (formData.userType === "student" || formData.userType === "talent") {
-        const { error: studentError } = await supabase.from("student_profiles").insert({
-          id: userId,
-          university: formData.university,
-          programme: formData.programme || null,
-          academic_level: formData.academicLevel || null,
-          graduation_year: formData.graduationYear || null,
-          ns_status: formData.nsStatus || null,
-          skills: formData.skills,
-          available_from: formData.availableFrom || null,
-        })
-
-        if (studentError) throw studentError
+        const { error: studentError } = await supabase
+          .from("student_profiles")
+          .insert({
+            id: userId,
+            university: formData.university || null,
+            programme: formData.programme || null,
+            academic_level: formData.academicLevel || null,
+            skills: formData.skills || [],
+            available_from: formData.availableFrom || null,
+          })
+  
+        if (studentError) {
+          console.error("Student profile error:", studentError)
+        }
       }
-
+  
       if (formData.userType === "organisation") {
-        const { error: orgError } = await supabase.from("organisation_profiles").insert({
-          id: userId,
-          organisation_name: formData.organisationName,
-          organisation_type: formData.organisationType,
-          description: formData.description || null,
-        })
-
-        if (orgError) throw orgError
+        const { error: orgError } = await supabase
+          .from("organisation_profiles")
+          .insert({
+            id: userId,
+            organisation_name: formData.organisationName || null,
+            organisation_type: formData.organisationType || null,
+            description: formData.description || null,
+          })
+  
+        if (orgError) {
+          console.error("Org profile error:", orgError)
+        }
       }
-
+  
       setSuccess(true)
+  
     } catch (err) {
-      setError(err.message || "Something went wrong. Please try again.")
-    } finally {
-      setLoading(false)
+      if (err.message?.includes("already registered")) {
+        setError("An account with this email already exists. Please sign in instead.")
+      } else if (err.message?.includes("verify")) {
+        setSuccess(true)
+      } else {
+        setError(err.message || "Something went wrong. Please try again.")
+      }
     }
+  
+    setLoading(false)
   }
 
   if (success) {
