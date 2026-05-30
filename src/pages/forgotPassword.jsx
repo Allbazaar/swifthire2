@@ -17,9 +17,9 @@ export default function ForgotPassword() {
     setError("")
 
     const { error: resetError } = await supabase.auth.resetPasswordForEmail(
-      email,
-      { redirectTo: `${window.location.origin}/reset-password` }
-    )
+        email,
+        { redirectTo: `https://swifthire2.vercel.app/reset-password` }
+      )
 
     if (resetError) {
       setError("Something went wrong. Please try again.")
