@@ -11,14 +11,34 @@ export default function ResetPassword() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState(false)
-  const [validSession, setValidSession] = useState(false)
+  const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    supabase.auth.onAuthStateChange((event) => {
-      if (event === "PASSWORD_RECOVERY") {
-        setValidSession(true)
+    const handleSession = async () => {
+      const hashParams = new URLSearchParams(
+        window.location.hash.substring(1)
+      )
+      const accessToken = hashParams.get("access_token")
+      const refreshToken = hashParams.get("refresh_token")
+      const type = hashParams.get("type")
+
+      if (type === "recovery" && accessToken) {
+        const { error } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken,
+        })
+
+        if (error) {
+          setError("This reset link has expired. Please request a new one.")
+        } else {
+          setReady(true)
+        }
+      } else {
+        setError("Invalid reset link. Please request a new one.")
       }
-    })
+    }
+
+    handleSession()
   }, [])
 
   const handleReset = async () => {
@@ -34,7 +54,7 @@ export default function ResetPassword() {
     })
 
     if (updateError) {
-      setError("Failed to reset password. Please try again or request a new link.")
+      setError("Failed to update password. Please request a new reset link.")
     } else {
       setSuccess(true)
       setTimeout(() => navigate("/signin"), 3000)
@@ -106,34 +126,89 @@ export default function ResetPassword() {
         margin: "0 auto",
         boxSizing: "border-box",
       }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-          <div>
-            <h2 style={{
-              fontSize: "24px",
-              fontWeight: "600",
-              color: "#1A3C6E",
-              margin: "0 0 6px",
-              fontFamily: "Plus Jakarta Sans, sans-serif",
-            }}>
-              Set new password
+
+        {error && !ready ? (
+          <div style={{ display: "flex", flexDirection: "column", gap: "16px", textAlign: "center", alignItems: "center" }}>
+            <div style={{ fontSize: "48px" }}>⚠️</div>
+            <h2 style={{ fontSize: "20px", fontWeight: "600", color: "#1A3C6E", margin: 0 }}>
+              Link expired
             </h2>
             <p style={{ fontSize: "13px", color: "#6B7280", margin: 0 }}>
-              Choose a strong password for your account
+              {error}
             </p>
+            <Button variant="primary" onClick={() => navigate("/forgot-password")}>
+              Request new link
+            </Button>
           </div>
+        ) : ready ? (
+          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+            <div>
+              <h2 style={{
+                fontSize: "24px",
+                fontWeight: "600",
+                color: "#1A3C6E",
+                margin: "0 0 6px",
+                fontFamily: "Plus Jakarta Sans, sans-serif",
+              }}>
+                Set new password
+              </h2>
+              <p style={{ fontSize: "13px", color: "#6B7280", margin: 0 }}>
+                Choose a strong password for your account
+              </p>
+            </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-            <label style={{ fontSize: "12px", fontWeight: "500", color: "#1C1C1E" }}>
-              New password
-            </label>
-            <div style={{ position: "relative" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={{ fontSize: "12px", fontWeight: "500", color: "#1C1C1E" }}>
+                New password
+              </label>
+              <div style={{ position: "relative" }}>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Min. 6 characters"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  style={{
+                    padding: "12px 44px 12px 14px",
+                    borderRadius: "8px",
+                    border: "1.5px solid #E5E7EB",
+                    fontSize: "14px",
+                    outline: "none",
+                    background: "#fff",
+                    color: "#1C1C1E",
+                    width: "100%",
+                    boxSizing: "border-box",
+                  }}
+                />
+                <button
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{
+                    position: "absolute",
+                    right: "12px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "transparent",
+                    border: "none",
+                    cursor: "pointer",
+                    fontSize: "12px",
+                    color: "#6B7280",
+                  }}
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </button>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={{ fontSize: "12px", fontWeight: "500", color: "#1C1C1E" }}>
+                Confirm new password
+              </label>
               <input
                 type={showPassword ? "text" : "password"}
-                placeholder="Min. 6 characters"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Repeat your new password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 style={{
-                  padding: "12px 44px 12px 14px",
+                  padding: "12px 14px",
                   borderRadius: "8px",
                   border: "1.5px solid #E5E7EB",
                   fontSize: "14px",
@@ -144,56 +219,21 @@ export default function ResetPassword() {
                   boxSizing: "border-box",
                 }}
               />
-              <button
-                onClick={() => setShowPassword(!showPassword)}
-                style={{
-                  position: "absolute",
-                  right: "12px",
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  background: "transparent",
-                  border: "none",
-                  cursor: "pointer",
-                  fontSize: "12px",
-                  color: "#6B7280",
-                }}
-              >
-                {showPassword ? "Hide" : "Show"}
-              </button>
             </div>
+
+            {error && (
+              <p style={{ fontSize: "12px", color: "#C0392B", margin: 0 }}>{error}</p>
+            )}
+
+            <Button fullWidth variant="primary" onClick={handleReset} disabled={loading}>
+              {loading ? "Updating..." : "Update password"}
+            </Button>
           </div>
-
-          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-            <label style={{ fontSize: "12px", fontWeight: "500", color: "#1C1C1E" }}>
-              Confirm new password
-            </label>
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="Repeat your new password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              style={{
-                padding: "12px 14px",
-                borderRadius: "8px",
-                border: "1.5px solid #E5E7EB",
-                fontSize: "14px",
-                outline: "none",
-                background: "#fff",
-                color: "#1C1C1E",
-                width: "100%",
-                boxSizing: "border-box",
-              }}
-            />
+        ) : (
+          <div style={{ textAlign: "center", color: "#6B7280", fontSize: "14px" }}>
+            Verifying your reset link...
           </div>
-
-          {error && (
-            <p style={{ fontSize: "12px", color: "#C0392B", margin: 0 }}>{error}</p>
-          )}
-
-          <Button fullWidth variant="primary" onClick={handleReset} disabled={loading}>
-            {loading ? "Updating..." : "Update password"}
-          </Button>
-        </div>
+        )}
       </div>
     </div>
   )
