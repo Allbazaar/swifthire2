@@ -57,7 +57,7 @@ export default function ResetPassword() {
       setError("Failed to update password. Please request a new reset link.")
     } else {
       setSuccess(true)
-      setTimeout(() => navigate("/signin"), 3000)
+      setTimeout(() => navigate("/dashboard"), 3000)
     }
 
     setLoading(false)
