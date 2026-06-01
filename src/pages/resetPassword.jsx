@@ -15,63 +15,61 @@ export default function ResetPassword() {
   const [checking, setChecking] = useState(true)
 
   useEffect(() => {
-    const exchangeCode = async () => {
-      const urlParams = new URLSearchParams(window.location.search)
-      const code = urlParams.get("code")
-
-      if (code) {
-        const { error } = await supabase.auth.exchangeCodeForSession(code)
-        if (error) {
+    const handleToken = async () => {
+      const hashParams = new URLSearchParams(
+        window.location.hash.substring(1)
+      )
+      const accessToken = hashParams.get("access_token")
+      const refreshToken = hashParams.get("refresh_token")
+      const type = hashParams.get("type")
+  
+      if (type === "recovery" && accessToken && refreshToken) {
+        const { data, error } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken,
+        })
+  
+        if (error || !data.session) {
           setError("This reset link has expired. Please request a new one.")
         } else {
           setReady(true)
         }
       } else {
-        const hashParams = new URLSearchParams(
-          window.location.hash.substring(1)
-        )
-        const accessToken = hashParams.get("access_token")
-        const refreshToken = hashParams.get("refresh_token")
-        const type = hashParams.get("type")
-
-        if (type === "recovery" && accessToken) {
-          const { error } = await supabase.auth.setSession({
-            access_token: accessToken,
-            refresh_token: refreshToken,
-          })
-          if (error) {
-            setError("This reset link has expired. Please request a new one.")
-          } else {
-            setReady(true)
-          }
-        } else {
-          setError("Invalid reset link. Please request a new one.")
-        }
+        setError("Invalid or expired reset link. Please request a new one.")
       }
-
+  
       setChecking(false)
     }
-
-    exchangeCode()
+  
+    handleToken()
   }, [])
-
+  
   const handleReset = async () => {
     if (!password) return setError("Please enter a new password")
     if (password.length < 6) return setError("Password must be at least 6 characters")
     if (password !== confirmPassword) return setError("Passwords do not match")
-
+  
     setLoading(true)
     setError("")
-
+  
+    const { data: { session } } = await supabase.auth.getSession()
+  
+    if (!session) {
+      setError("Your session has expired. Please request a new reset link.")
+      setLoading(false)
+      return
+    }
+  
     const { error: updateError } = await supabase.auth.updateUser({ password })
-
+  
     if (updateError) {
-      setError("Failed to update password. Please request a new reset link.")
+      console.error("Update error:", updateError)
+      setError(`Failed to update: ${updateError.message}`)
     } else {
       setSuccess(true)
       setTimeout(() => navigate("/signin"), 3000)
     }
-
+  
     setLoading(false)
   }
 
