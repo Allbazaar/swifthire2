@@ -1,9 +1,21 @@
+import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import Button from "../components/button"
 import Badge from "../components/badge"
 
 export default function Welcome() {
   const navigate = useNavigate()
+  useEffect(() => {
+    const hashParams = new URLSearchParams(
+      window.location.hash.substring(1)
+    )
+    const type = hashParams.get("type")
+    const accessToken = hashParams.get("access_token")
+  
+    if (type === "recovery" && accessToken) {
+      navigate(`/reset-password${window.location.hash}`)
+    }
+  }, [navigate])
 
   return (
     <div style={{
