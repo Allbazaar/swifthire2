@@ -1,9 +1,57 @@
+import { useState, useEffect } from "react"
+import { supabase } from "../lib/supabase"
 import Badge from "./badge"
 
 export default function OpportunityCard({ opportunity, onClick }) {
+  const [saved, setSaved] = useState(false)
+  const [savingId, setSavingId] = useState(null)
+  const [user, setUser] = useState(null)
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      setUser(user)
+
+      if (user) {
+        const { data } = await supabase
+          .from("saved_opportunities")
+          .select("id")
+          .eq("user_id", user.id)
+          .eq("opportunity_id", opportunity.id)
+          .single()
+
+        if (data) setSaved(true)
+      }
+    }
+    getUser()
+  }, [opportunity.id])
+
+  const handleSave = async (e) => {
+    e.stopPropagation()
+    if (!user) return
+
+    setSavingId(opportunity.id)
+
+    if (saved) {
+      await supabase
+        .from("saved_opportunities")
+        .delete()
+        .eq("user_id", user.id)
+        .eq("opportunity_id", opportunity.id)
+      setSaved(false)
+    } else {
+      await supabase
+        .from("saved_opportunities")
+        .insert({ user_id: user.id, opportunity_id: opportunity.id })
+      setSaved(true)
+    }
+
+    setSavingId(null)
+  }
+
   const handleWhatsAppShare = (e) => {
     e.stopPropagation()
-    const message = `🚀 *${opportunity.title}*\n\n🏢 ${opportunity.organisation_name}\n📍 ${opportunity.location}\n⏰ Deadline: ${new Date(opportunity.deadline).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}\n\n Apply on SwiftHire: ${window.location.origin}/opportunities/${opportunity.id}`
+    const message = `🚀 *${opportunity.title}*\n\n🏢 ${opportunity.organisation_name || "SwiftHire Partner"}\n📍 ${opportunity.location}\n⏰ Deadline: ${new Date(opportunity.deadline).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}\n\nApply on SwiftHire: ${window.location.origin}/opportunities/${opportunity.id}`
     const url = `https://wa.me/?text=${encodeURIComponent(message)}`
     window.open(url, "_blank")
   }
@@ -67,16 +115,34 @@ export default function OpportunityCard({ opportunity, onClick }) {
           }}>
             {opportunity.title}
           </div>
-          <div style={{
-            fontSize: "12px",
-            color: "#6B7280",
-          }}>
+          <div style={{ fontSize: "12px", color: "#6B7280" }}>
             {opportunity.organisation_name || "SwiftHire Partner"} · {opportunity.location}
           </div>
         </div>
-        {opportunity.is_featured && (
-          <Badge label="Featured" variant="amber" />
-        )}
+        <div style={{ display: "flex", gap: "6px", alignItems: "center", flexShrink: 0 }}>
+          {opportunity.is_featured && (
+            <Badge label="Featured" variant="amber" />
+          )}
+          {user && (
+            <button
+              onClick={handleSave}
+              disabled={savingId === opportunity.id}
+              style={{
+                background: saved ? "#E6F1FB" : "transparent",
+                border: saved ? "1.5px solid #1A3C6E" : "1.5px solid #E5E7EB",
+                borderRadius: "6px",
+                padding: "4px 8px",
+                fontSize: "14px",
+                cursor: "pointer",
+                color: saved ? "#1A3C6E" : "#9CA3AF",
+                transition: "all 0.2s",
+              }}
+              title={saved ? "Remove from saved" : "Save for later"}
+            >
+              {saved ? "🔖" : "🔖"}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Tags row */}
@@ -125,9 +191,6 @@ export default function OpportunityCard({ opportunity, onClick }) {
             fontSize: "11px",
             fontWeight: "500",
             cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            gap: "4px",
           }}
         >
           Share

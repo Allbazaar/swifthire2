@@ -187,6 +187,31 @@ export default function Dashboard() {
             </div>
 
             <div
+              onClick={() => navigate("/saved")}
+              style={{
+                background: "#fff",
+                borderRadius: "12px",
+                padding: "18px 20px",
+                border: "0.5px solid #F3F4F6",
+                boxShadow: "0 2px 12px rgba(26, 60, 110, 0.06)",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <div>
+                <h3 style={{ fontSize: "15px", fontWeight: "600", color: "#1A3C6E", margin: "0 0 3px" }}>
+                  Saved opportunities
+                </h3>
+                <p style={{ fontSize: "12px", color: "#6B7280", margin: 0 }}>
+                  Roles you bookmarked for later
+                </p>
+              </div>
+              <div style={{ fontSize: "20px", color: "#1A3C6E" }}>→</div>
+            </div>
+
+            <div
               onClick={() => navigate("/profile")}
               style={{
                 background: "#fff",
@@ -300,5 +325,3 @@ export default function Dashboard() {
     </div>
   )
 }
-
-      

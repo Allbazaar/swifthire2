@@ -11,6 +11,7 @@ import MyApplications from "./pages/myApplications"
 import OrgDashboard from "./pages/orgDashboard"
 import ForgotPassword from "./pages/forgotPassword"
 import ResetPassword from "./pages/resetPassword"
+import SavedOpportunities from "./pages/savedOpportunities"
 
 export default function App() {
   return (
@@ -28,6 +29,7 @@ export default function App() {
         <Route path="/org-dashboard" element={<OrgDashboard />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/saved-opportunities" element={<SavedOpportunities />} />
       </Routes>
     </BrowserRouter>
   )
