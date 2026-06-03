@@ -14,6 +14,7 @@ export default function PostOpportunity() {
     title: "",
     description: "",
     opportunity_type: "internship",
+    industry: "general",
     location: "",
     is_paid: false,
     duration: "",
@@ -23,10 +24,7 @@ export default function PostOpportunity() {
   useEffect(() => {
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        navigate("/signin")
-        return
-      }
+      if (!user) { navigate("/signin"); return }
       setUser(user)
     }
     getUser()
@@ -50,6 +48,7 @@ export default function PostOpportunity() {
         title: form.title,
         description: form.description,
         opportunity_type: form.opportunity_type,
+        industry: form.industry,
         location: form.location,
         is_paid: form.is_paid,
         duration: form.duration || null,
@@ -91,7 +90,19 @@ export default function PostOpportunity() {
           <Button fullWidth variant="primary" onClick={() => navigate("/opportunities")}>
             View all opportunities
           </Button>
-          <Button fullWidth variant="ghost" onClick={() => { setSuccess(false); setForm({ title: "", description: "", opportunity_type: "internship", location: "", is_paid: false, duration: "", deadline: "" }) }}>
+          <Button fullWidth variant="ghost" onClick={() => {
+            setSuccess(false)
+            setForm({
+              title: "",
+              description: "",
+              opportunity_type: "internship",
+              industry: "general",
+              location: "",
+              is_paid: false,
+              duration: "",
+              deadline: "",
+            })
+          }}>
             Post another
           </Button>
         </div>
@@ -106,7 +117,6 @@ export default function PostOpportunity() {
       fontFamily: "Inter, sans-serif",
     }}>
 
-      {/* Navigation */}
       <nav style={{
         background: "#fff",
         borderBottom: "0.5px solid #F3F4F6",
@@ -193,6 +203,38 @@ export default function PostOpportunity() {
               <option value="ns_placement">NS Placement</option>
               <option value="campus_job">Campus Job</option>
               <option value="research">Research Role</option>
+            </select>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+            <label style={{ fontSize: "12px", fontWeight: "500", color: "#1C1C1E" }}>
+              Industry
+            </label>
+            <select
+              value={form.industry}
+              onChange={(e) => update("industry", e.target.value)}
+              style={{
+                padding: "12px 14px",
+                borderRadius: "8px",
+                border: "1.5px solid #E5E7EB",
+                fontSize: "14px",
+                background: "#fff",
+                color: "#1C1C1E",
+                outline: "none",
+              }}
+            >
+              <option value="general">General</option>
+              <option value="tech">Technology</option>
+              <option value="finance">Finance & Banking</option>
+              <option value="health">Health & Medicine</option>
+              <option value="agriculture">Agriculture</option>
+              <option value="ngo">NGO & Development</option>
+              <option value="government">Government & Public Sector</option>
+              <option value="education">Education</option>
+              <option value="media">Media & Communications</option>
+              <option value="engineering">Engineering</option>
+              <option value="legal">Legal</option>
+              <option value="hospitality">Hospitality & Tourism</option>
             </select>
           </div>
 

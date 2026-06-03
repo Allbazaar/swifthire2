@@ -8,6 +8,8 @@ export default function Opportunities() {
   const [opportunities, setOpportunities] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+  const [filter, setFilter] = useState("all")
+  const [industryFilter, setIndustryFilter] = useState("all")
 
   useEffect(() => {
     const fetchOpportunities = async () => {
@@ -27,6 +29,10 @@ export default function Opportunities() {
 
     fetchOpportunities()
   }, [])
+
+  const filtered = opportunities
+    .filter(o => filter === "all" || o.opportunity_type === filter)
+    .filter(o => industryFilter === "all" || o.industry === industryFilter)
 
   return (
     <div style={{
@@ -95,6 +101,83 @@ export default function Opportunities() {
           </p>
         </div>
 
+        {/* Type filters */}
+        <div style={{
+          display: "flex",
+          gap: "8px",
+          overflowX: "auto",
+          paddingBottom: "8px",
+        }}>
+          {[
+            { value: "all", label: "All types" },
+            { value: "internship", label: "Internships" },
+            { value: "attachment", label: "Attachments" },
+            { value: "ns_placement", label: "NS Placements" },
+            { value: "research", label: "Research" },
+            { value: "campus_job", label: "Campus Jobs" },
+          ].map(f => (
+            <button
+              key={f.value}
+              onClick={() => setFilter(f.value)}
+              style={{
+                padding: "6px 14px",
+                borderRadius: "20px",
+                border: filter === f.value ? "2px solid #1A3C6E" : "1.5px solid #E5E7EB",
+                background: filter === f.value ? "#1A3C6E" : "#fff",
+                color: filter === f.value ? "#fff" : "#6B7280",
+                fontSize: "12px",
+                fontWeight: filter === f.value ? "500" : "400",
+                cursor: "pointer",
+                whiteSpace: "nowrap",
+                flexShrink: 0,
+              }}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Industry filters */}
+        <div style={{
+          display: "flex",
+          gap: "8px",
+          overflowX: "auto",
+          paddingBottom: "8px",
+        }}>
+          {[
+            { value: "all", label: "All industries" },
+            { value: "tech", label: "Technology" },
+            { value: "finance", label: "Finance" },
+            { value: "health", label: "Health" },
+            { value: "agriculture", label: "Agriculture" },
+            { value: "ngo", label: "NGO" },
+            { value: "government", label: "Government" },
+            { value: "education", label: "Education" },
+            { value: "media", label: "Media" },
+            { value: "engineering", label: "Engineering" },
+            { value: "legal", label: "Legal" },
+          ].map(f => (
+            <button
+              key={f.value}
+              onClick={() => setIndustryFilter(f.value)}
+              style={{
+                padding: "6px 14px",
+                borderRadius: "20px",
+                border: industryFilter === f.value ? "2px solid #0F9E7B" : "1.5px solid #E5E7EB",
+                background: industryFilter === f.value ? "#0F9E7B" : "#fff",
+                color: industryFilter === f.value ? "#fff" : "#6B7280",
+                fontSize: "12px",
+                fontWeight: industryFilter === f.value ? "500" : "400",
+                cursor: "pointer",
+                whiteSpace: "nowrap",
+                flexShrink: 0,
+              }}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+
         {loading && (
           <p style={{ fontSize: "14px", color: "#6B7280" }}>Loading...</p>
         )}
@@ -103,7 +186,7 @@ export default function Opportunities() {
           <p style={{ fontSize: "12px", color: "#C0392B", margin: 0 }}>{error}</p>
         )}
 
-        {!loading && !error && opportunities.length === 0 && (
+        {!loading && !error && filtered.length === 0 && (
           <div style={{
             background: "#fff",
             borderRadius: "12px",
@@ -112,12 +195,12 @@ export default function Opportunities() {
             border: "0.5px solid #F3F4F6",
           }}>
             <p style={{ fontSize: "14px", color: "#6B7280", margin: 0 }}>
-              No active opportunities yet. Check back soon.
+              No opportunities found for this filter. Try a different category.
             </p>
           </div>
         )}
 
-        {opportunities.map((opp) => (
+        {filtered.map((opp) => (
           <OpportunityCard
             key={opp.id}
             opportunity={opp}
