@@ -213,33 +213,55 @@ export default function OpportunityDetail() {
           </div>
 
           <div style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "10px",
-          }}>
-            <div style={{
-              background: "#FAF9F7",
-              borderRadius: "8px",
-              padding: "10px 12px",
-            }}>
-              <div style={{ fontSize: "10px", color: "#9CA3AF", marginBottom: "2px" }}>DEADLINE</div>
-              <div style={{ fontSize: "13px", fontWeight: "500", color: "#1C1C1E" }}>
-                {opportunity.deadline
-                  ? new Date(opportunity.deadline).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
-                  : "Open ended"}
-              </div>
-            </div>
-            <div style={{
-              background: "#FAF9F7",
-              borderRadius: "8px",
-              padding: "10px 12px",
-            }}>
-              <div style={{ fontSize: "10px", color: "#9CA3AF", marginBottom: "2px" }}>LOCATION</div>
-              <div style={{ fontSize: "13px", fontWeight: "500", color: "#1C1C1E" }}>
-                {opportunity.location}
-              </div>
-            </div>
-          </div>
+  display: "grid",
+  gridTemplateColumns: "1fr 1fr",
+  gap: "10px",
+}}>
+  <div style={{
+    background: "#FAF9F7",
+    borderRadius: "8px",
+    padding: "10px 12px",
+  }}>
+    <div style={{ fontSize: "10px", color: "#9CA3AF", marginBottom: "2px" }}>DEADLINE</div>
+    <div style={{ fontSize: "13px", fontWeight: "500", color: "#1C1C1E" }}>
+      {opportunity.deadline
+        ? new Date(opportunity.deadline).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
+        : "Open ended"}
+    </div>
+  </div>
+  <div style={{
+    background: "#FAF9F7",
+    borderRadius: "8px",
+    padding: "10px 12px",
+  }}>
+    <div style={{ fontSize: "10px", color: "#9CA3AF", marginBottom: "2px" }}>LOCATION</div>
+    <div style={{ fontSize: "13px", fontWeight: "500", color: "#1C1C1E" }}>
+      {opportunity.location}
+    </div>
+  </div>
+  <div style={{
+    background: "#FAF9F7",
+    borderRadius: "8px",
+    padding: "10px 12px",
+  }}>
+    <div style={{ fontSize: "10px", color: "#9CA3AF", marginBottom: "2px" }}>PAY</div>
+    <div style={{ fontSize: "13px", fontWeight: "500", color: "#1C1C1E" }}>
+      {opportunity.pay_range || (opportunity.is_paid ? "Paid — amount TBD" : "Unpaid")}
+    </div>
+  </div>
+  {opportunity.duration && (
+    <div style={{
+      background: "#FAF9F7",
+      borderRadius: "8px",
+      padding: "10px 12px",
+    }}>
+      <div style={{ fontSize: "10px", color: "#9CA3AF", marginBottom: "2px" }}>DURATION</div>
+      <div style={{ fontSize: "13px", fontWeight: "500", color: "#1C1C1E" }}>
+        {opportunity.duration}
+      </div>
+    </div>
+  )}
+</div>
         </div>
 
         {/* Description */}

@@ -17,6 +17,7 @@ export default function PostOpportunity() {
     industry: "general",
     location: "",
     is_paid: false,
+    pay_range: "",
     duration: "",
     deadline: "",
   })
@@ -53,6 +54,7 @@ export default function PostOpportunity() {
         is_paid: form.is_paid,
         duration: form.duration || null,
         deadline: form.deadline,
+        pay_range: form.pay_range || null,
         is_active: true,
         is_featured: false,
       })
@@ -99,6 +101,7 @@ export default function PostOpportunity() {
               industry: "general",
               location: "",
               is_paid: false,
+              pay_range: "",
               duration: "",
               deadline: "",
             })
@@ -296,6 +299,31 @@ export default function PostOpportunity() {
                 boxSizing: "border-box",
               }}
             />
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+            <label style={{ fontSize: "12px", fontWeight: "500", color: "#1C1C1E" }}>
+              Pay / stipend
+            </label>
+            <input
+              placeholder="e.g. GH₵ 500/month, GH₵ 200/week, Negotiable"
+              value={form.pay_range}
+              onChange={(e) => update("pay_range", e.target.value)}
+              style={{
+                padding: "12px 14px",
+                borderRadius: "8px",
+                border: "1.5px solid #E5E7EB",
+                fontSize: "14px",
+                outline: "none",
+                background: "#fff",
+                color: "#1C1C1E",
+                width: "100%",
+                boxSizing: "border-box",
+              }}
+            />
+            <span style={{ fontSize: "11px", color: "#9CA3AF" }}>
+              Leave empty if unpaid or to be discussed
+            </span>
           </div>
 
           <div

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react"
 import { supabase } from "../lib/supabase"
 import Badge from "./badge"
@@ -146,23 +147,27 @@ export default function OpportunityCard({ opportunity, onClick }) {
       </div>
 
       {/* Tags row */}
-      <div style={{
-        display: "flex",
-        gap: "6px",
-        flexWrap: "wrap",
-        marginBottom: "12px",
-      }}>
-        <Badge
-          label={typeLabels[opportunity.opportunity_type] || opportunity.opportunity_type}
-          variant="blue"
-        />
-        {opportunity.is_paid && (
-          <Badge label="Paid" variant="teal" />
-        )}
-        {opportunity.duration && (
-          <Badge label={opportunity.duration} variant="gray" />
-        )}
-      </div>
+<div style={{
+  display: "flex",
+  gap: "6px",
+  flexWrap: "wrap",
+  marginBottom: "12px",
+}}>
+  <Badge
+    label={typeLabels[opportunity.opportunity_type] || opportunity.opportunity_type}
+    variant="blue"
+  />
+  {opportunity.pay_range ? (
+    <Badge label={opportunity.pay_range} variant="teal" />
+  ) : opportunity.is_paid ? (
+    <Badge label="Paid" variant="teal" />
+  ) : (
+    <Badge label="Unpaid" variant="gray" />
+  )}
+  {opportunity.duration && (
+    <Badge label={opportunity.duration} variant="gray" />
+  )}
+</div>
 
       {/* Footer row */}
       <div style={{
