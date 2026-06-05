@@ -45,6 +45,33 @@ export default function Step2Name({ formData, updateFormData, onNext, onBack }) 
         onChange={(e) => updateFormData({ middleName: e.target.value })}
       />
 
+      <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+        <label style={{ fontSize: "12px", fontWeight: "500", color: "#1C1C1E", display: "flex", justifyContent: "space-between" }}>
+          WhatsApp number
+          <span style={{ color: "#9CA3AF", fontWeight: "400" }}>Optional</span>
+        </label>
+        <input
+          type="tel"
+          placeholder="+233 24 000 0000"
+          value={formData.phone || ""}
+          onChange={(e) => updateFormData({ phone: e.target.value })}
+          style={{
+            padding: "12px 14px",
+            borderRadius: "8px",
+            border: "1.5px solid #E5E7EB",
+            fontSize: "14px",
+            outline: "none",
+            background: "#fff",
+            color: "#1C1C1E",
+            width: "100%",
+            boxSizing: "border-box",
+          }}
+        />
+        <span style={{ fontSize: "11px", color: "#9CA3AF" }}>
+          Shared only when you are hired for a role
+        </span>
+      </div>
+
       {error && (
         <p style={{ fontSize: "12px", color: "#C0392B", margin: 0 }}>{error}</p>
       )}

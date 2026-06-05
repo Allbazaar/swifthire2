@@ -1,10 +1,10 @@
 ﻿import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import Step1Credentials from "../components/signup/Step1Credentials"
-import Step2Name from "../components/signup/Step2Name"
-import Step3UserType from "../components/signup/Step3UserType"
-import Step4Skills from "../components/signup/Step4Skills"
-import Step5Verify from "../components/signup/Step5Verify"
+import Step1Credentials from "../components/signup/step1credentials"
+import Step2Name from "../components/signup/step2name"
+import Step3UserType from "../components/signup/step3usertype"
+import Step4Skills from "../components/signup/step4skills"
+import Step5Verify from "../components/signup/step5verify"
 
 export default function SignUp() {
   const navigate = useNavigate()
@@ -16,6 +16,7 @@ export default function SignUp() {
     firstName: "",
     lastName: "",
     middleName: "",
+    phone: "",
     userType: "",
     university: "",
     programme: "",

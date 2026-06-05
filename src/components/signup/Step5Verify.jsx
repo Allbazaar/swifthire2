@@ -32,15 +32,16 @@ export default function Step5Verify({ formData, onBack }) {
       const userId = user.id
 
       const { error: profileError } = await supabase
-        .from("profiles")
-        .upsert({
-          id: userId,
-          user_type: formData.userType,
-          first_name: formData.firstName,
-          last_name: formData.lastName,
-          middle_name: formData.middleName || null,
-          is_verified: formData.email.endsWith(".edu.gh"),
-        })
+  .from("profiles")
+  .upsert({
+    id: userId,
+    user_type: formData.userType,
+    first_name: formData.firstName,
+    last_name: formData.lastName,
+    middle_name: formData.middleName || null,
+    phone: formData.phone || null,
+    is_verified: formData.email.endsWith(".edu.gh"),
+  })
 
       if (profileError) {
         console.error("Profile error:", profileError.message)

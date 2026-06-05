@@ -358,6 +358,41 @@ export default function OrgDashboard() {
                         "{app.cover_note}"
                       </div>
                     )}
+                    {app.status === "hired" && app.profiles?.phone && (
+  <div style={{
+    background: "#E1F5EE",
+    borderRadius: "8px",
+    padding: "10px 12px",
+    marginBottom: "10px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+  }}>
+    <div>
+      <div style={{ fontSize: "11px", color: "#0F6E56", fontWeight: "500" }}>
+        Candidate WhatsApp
+      </div>
+      <div style={{ fontSize: "12px", color: "#0F6E56", marginTop: "2px" }}>
+        {app.profiles.phone}
+      </div>
+    </div>
+    <button
+      onClick={() => window.open(`https://wa.me/${app.profiles.phone.replace(/\D/g, "")}`, "_blank")}
+      style={{
+        background: "#0F9E7B",
+        color: "#fff",
+        border: "none",
+        borderRadius: "6px",
+        padding: "6px 12px",
+        fontSize: "11px",
+        fontWeight: "500",
+        cursor: "pointer",
+      }}
+    >
+      Open WhatsApp
+    </button>
+  </div>
+)}
 
                     {/* Status controls */}
                     <div style={{

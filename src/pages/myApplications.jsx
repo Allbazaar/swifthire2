@@ -12,23 +12,41 @@ export default function MyApplications() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { navigate("/signin"); return }
 
-      const { data, error } = await supabase
-        .from("applications")
-        .select(`
-          *,
-          opportunities (
-            title,
-            location,
-            opportunity_type,
-            deadline,
-            organisation_id
-          )
-        `)
-        .eq("applicant_id", user.id)
-        .order("applied_at", { ascending: false })
+      const { data: appsData, error } = await supabase
+      .from("applications")
+      .select(`
+        *,
+        opportunities (
+          title,
+          location,
+          opportunity_type,
+          deadline,
+          organisation_id
+        )
+      `)
+      .eq("applicant_id", user.id)
+      .order("applied_at", { ascending: false })
+    
+    if (!error && appsData) {
+      const orgIds = appsData
+        .map(a => a.opportunities?.organisation_id)
+        .filter(Boolean)
+    
+      const { data: orgProfiles } = await supabase
+        .from("profiles")
+        .select("id, phone")
+        .in("id", orgIds)
+    
+      const enriched = appsData.map(app => ({
+        ...app,
+        org_phone: orgProfiles?.find(p => p.id === app.opportunities?.organisation_id)?.phone || null
+      }))
+    
+      setApplications(enriched)
+    }
+    setLoading(false)
+    return
 
-      if (!error && data) setApplications(data)
-      setLoading(false)
     }
 
     fetchApplications()
@@ -221,31 +239,50 @@ export default function MyApplications() {
                   </div>
                 )}
 
-                <div style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  borderTop: "0.5px solid #F3F4F6",
-                  paddingTop: "10px",
-                }}>
-                  <span style={{ fontSize: "11px", color: "#9CA3AF" }}>
-                    Applied {new Date(app.applied_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
-                  </span>
-                  <button
-                    onClick={() => navigate(`/opportunities/${app.opportunity_id}`)}
-                    style={{
-                      background: "transparent",
-                      border: "1.5px solid #E5E7EB",
-                      color: "#1A3C6E",
-                      borderRadius: "6px",
-                      padding: "4px 10px",
-                      fontSize: "11px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    View role
-                  </button>
-                </div>
+<div style={{
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  borderTop: "0.5px solid #F3F4F6",
+  paddingTop: "10px",
+}}>
+  <span style={{ fontSize: "11px", color: "#9CA3AF" }}>
+    Applied {new Date(app.applied_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+  </span>
+  <div style={{ display: "flex", gap: "6px" }}>
+    {app.status === "hired" && app.org_phone && (
+      <button
+        onClick={() => window.open(`https://wa.me/${app.org_phone.replace(/\D/g, "")}`, "_blank")}
+        style={{
+          background: "#E1F5EE",
+          border: "none",
+          color: "#0F6E56",
+          borderRadius: "6px",
+          padding: "4px 10px",
+          fontSize: "11px",
+          cursor: "pointer",
+          fontWeight: "500",
+        }}
+      >
+        WhatsApp org
+      </button>
+    )}
+    <button
+      onClick={() => navigate(`/opportunities/${app.opportunity_id}`)}
+      style={{
+        background: "transparent",
+        border: "1.5px solid #E5E7EB",
+        color: "#1A3C6E",
+        borderRadius: "6px",
+        padding: "4px 10px",
+        fontSize: "11px",
+        cursor: "pointer",
+      }}
+    >
+      View role
+    </button>
+  </div>
+</div>
               </div>
             ))}
           </div>
