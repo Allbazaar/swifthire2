@@ -10,18 +10,24 @@ export default function Dashboard() {
   useEffect(() => {
     const getProfile = async () => {
       const { data: { user } } = await supabase.auth.getUser()
-
+    
       if (!user) {
         navigate("/signin")
         return
       }
-
-      const { data } = await supabase
+    
+      const { data, error } = await supabase
         .from("profiles")
         .select("*")
         .eq("id", user.id)
         .single()
-
+    
+      if (error || !data) {
+        await supabase.auth.signOut()
+        navigate("/signin")
+        return
+      }
+    
       setProfile(data)
       setLoading(false)
     }
